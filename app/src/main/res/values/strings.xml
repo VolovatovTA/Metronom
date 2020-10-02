@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Metronom</string>
+    <string name="bL">Списки</string>
+    <string name="bR">Библиотека</string>
+    <string name="dialog0">Так будет называться новая запись</string>
+    <string name="create">Создать новый элемент</string>
+    <string name="dialog1">Введите уже чёньть</string>
+    <string name="title_activity_main2">MainActivity</string>
+    <string name="count">4</string>
+    <string name="cou">/</string>
+    <string name="start">START</string>
+    <string name="stop">STOP</string>
+    <string name="close">close</string>
+    <string name="tap">Tap temp</string>
+    <string name="On">Accent on</string>
+    <string name="Off">Accent off</string>
+    <string name="plus1">+1</string>
+    <string name="plus5">+5</string>
+    <string name="plus10">+10</string>
+    <string name="minus1">-1</string>
+    <string name="minus5">-5</string>
+    <string name="minus10">-10</string>
+    <string name="check">256</string>
+    <string name="saveL">save in list</string>
+    <string name="saveR">save in lib</string>
+
+
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="todo">TODO</string>
+    <string name="title_activity_main3">MainActivity</string>
+    <string name="previous">Previous</string>
+</resources>
