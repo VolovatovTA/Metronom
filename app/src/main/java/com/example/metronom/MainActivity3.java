@@ -50,7 +50,6 @@ public class MainActivity3 extends AppCompatActivity implements View.OnClickList
         names = new String[numer];
 
         if (cursor.moveToFirst()){
-
             do {
                 names[Integer.parseInt(cursor.getString(cursor.getColumnIndex(DBHelper.KEY_ID))) - 1] = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME));
             } while (cursor.moveToNext());}
