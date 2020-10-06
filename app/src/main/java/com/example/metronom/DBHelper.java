@@ -8,8 +8,8 @@ import androidx.annotation.Nullable;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static  final  int DATABASE_VERSION = 2;
-    public static  final  String DATABASE_NAME = "List";
+    public static  final  int DATABASE_VERSION = 3;
+    public static  final  String DATABASE_NAME = "List2";
     public static  final  String TABLE_TRACKS = "tracks";
 
     public static final String KEY_ID = "_id";
@@ -23,7 +23,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("create table " + TABLE_TRACKS + "(" + KEY_ID + " integer primary key," + KEY_NAME + " text," + KEY_TEMP + " text" + ")");
+        sqLiteDatabase.execSQL("create table " + TABLE_TRACKS + "(" + KEY_ID + " integer primary key," + KEY_NAME + " text," + KEY_TEMP + " integer" + ")");
 
     }
 

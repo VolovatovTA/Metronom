@@ -1,36 +1,36 @@
 package com.example.metronom;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
-import android.util.SparseBooleanArray;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import java.util.Objects;
+import java.util.ArrayList;
 
-public class MainActivity3 extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity3 extends AppCompatActivity {
 
     String TAG = "lifecycle111";
     DBHelper dbHelper;
-    final SQLiteDatabase database = Objects.requireNonNull(dbHelper).getWritableDatabase();
     ListView lvList;
-    FloatingActionButton fab;
-    boolean isFabAction = false;
-    int[] id_for_delete;
-    int numer;
+    boolean isSelectionMode = true;
+    int count_of_tracks;
     String[] names;
+    int[] temp;
+    private android.view.Menu menu;
+    ArrayList<Track> tracks;
     Cursor cursor;
+    MyAdapter myAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,97 +42,168 @@ public class MainActivity3 extends AppCompatActivity implements View.OnClickList
         lvList = findViewById(R.id.lvList);
         dbHelper = new DBHelper(this);
 
-        @SuppressLint("Recycle") Cursor cursor = database.query(DBHelper.TABLE_TRACKS, null,null, null, null, null,null);
+        SQLiteDatabase database = (dbHelper).getWritableDatabase();
 
-        cursor.moveToLast();
-        numer = Integer.parseInt(cursor.getString(cursor.getColumnIndex(DBHelper.KEY_ID)));
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        names = new String[numer];
+        cursor = database.query(DBHelper.TABLE_TRACKS, null, null, null, null, null, null);
+        // create List
+        CreateTrack();
 
-        if (cursor.moveToFirst()){
-            do {
-                names[Integer.parseInt(cursor.getString(cursor.getColumnIndex(DBHelper.KEY_ID))) - 1] = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME));
-            } while (cursor.moveToNext());}
 
-        else {
-            Log.d(TAG, "Ничё нет");
-            dbHelper.close();
-        }
+            myAdapter = new MyAdapter(this, tracks);
 
-        fab = findViewById(R.id.fab);
-        fab.setOnClickListener(MainActivity3.this);
+            lvList.setAdapter(myAdapter);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, names);
-        lvList.setAdapter(adapter);
+           /* // Listening
+            lvList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-        lvList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                if (!isFabAction){
-                    lvList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-                    Log.d(TAG, "itemClick: position = " + position + ", id = " + id);
-                    Intent intent = new Intent(MainActivity3.this, MainActivity.class);
-                    intent.putExtra("name", names[(int) id]);
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    if (!isSelectionMode) {
+                        Log.d(TAG, "itemClick: position = " + position + ", id = " + id);
 
-                    startActivity(intent);
-                }
-                else {
-                    lvList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-                    SparseBooleanArray sbArray = lvList.getCheckedItemPositions();
-                    id_for_delete = new int[sbArray.size()];
-
-                    for (int i = 0; i < sbArray.size(); i++) {
-                        int key = sbArray.keyAt(i);
-
-                        if (sbArray.get(key)){
-                            Log.d(TAG, names[key]);
-                            id_for_delete[i] = key;
+                        Intent intent = new Intent(MainActivity3.this, MainActivity.class);
+                        if (cursor.moveToPosition((int) id)) {
+                            intent.putExtra("name", cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME)));
+                            intent.putExtra("temp", cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_TEMP)));
+                            startActivity(intent);
                         }
                     }
                 }
-            }
-        });
-
+            });
+        }
         lvList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
-                Log.d(TAG, "itemSelect: position = " + position + ", id = " + id);
+
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
+                isSelectionMode = false;
 
             }
 
-        });
+        });*/
 
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 1, 1, "Choose");
+        menu.add(1, 2, 0, "Delete");
+        menu.add(1, 3, 0, "Paste in List");
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == 1) {
+            isSelectionMode = true;
+            lvList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+
+        } else if (item.getItemId() == 2) {
+            SQLiteDatabase database = (dbHelper).getWritableDatabase();
+            int count = DeleteSomeItems(findViewById(R.id.toolbar), database);
+            if (count != 0) {
+                myAdapter.notifyDataSetChanged();
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.fab) {
-            isFabAction = !isFabAction;
-            if (!isFabAction){
-                for (int i = 0; i < id_for_delete[numer]; i++) {
-                    database.delete("List", "id = " + id_for_delete[i], null);
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // TODO Auto-generated method stub
+        // пункты меню с ID группы = 1 видны, если в CheckBox стоит галка
+        menu.setGroupVisible(1, isSelectionMode);
+
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+    public int DeleteSomeItems(View v, SQLiteDatabase _database) {
+        int result = 0;
+        cursor.moveToFirst();
+
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+            if (tracks.get(i).box){
+                int id = cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_ID));
+                Log.d(TAG, "id = " + id);
+                result += _database.delete("tracks", "_id = " + id, null);
+            }
+            cursor.moveToNext();
+
+        }
+        int[] delete = new int[getCheckedCount(tracks)];
+
+        for (int i = 0; i < getCheckedCount(tracks); i++) {
+            for (int j = 0; j < cursor.getCount(); j++) {
+
+                if (tracks.get(j).box) {
+                    delete[i] = j;
                 }
-                lvList.removeAllViews();
+            }
+        }
+        for (int i = 0; i < getCheckedCount(tracks); i++){
+            tracks.remove(delete[i]);
+        }
 
-                if (cursor.moveToFirst()){
+        if (result == 0){
+            Toast.makeText(this, "Ни одной записи не было удалено", Toast.LENGTH_LONG).show();
 
-                    do {
-                        names[Integer.parseInt(cursor.getString(cursor.getColumnIndex(DBHelper.KEY_ID))) - 1] = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME));
-                    } while (cursor.moveToNext());}
+        } else if (result == 1){
+            Toast.makeText(this, "Была удалена " + result + " запись", Toast.LENGTH_LONG).show();
 
-                else {
-                    Log.d(TAG, "Ничё нет");
-                    dbHelper.close();
-                }
+        } else if (result < 5 & result > 1){
+            Toast.makeText(this, "Было удалено " + result + " записи", Toast.LENGTH_LONG).show();
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, names);
-                lvList.setAdapter(adapter);
+        } else if (result > 5){
+            Toast.makeText(this, "Было удалено " + result + " записей", Toast.LENGTH_LONG).show();
+
+        }
+        return  result;
+    }
+
+    public void CreateTrack() {
+        if (cursor.moveToLast()) {
+            count_of_tracks = cursor.getCount();
+            names = new String[count_of_tracks];
+            temp = new int[count_of_tracks];
+
+        } else {
+            count_of_tracks = 1;
+            names = new String[count_of_tracks];
+            temp = new int[count_of_tracks];
+        }
+
+
+        if (cursor.moveToFirst()) {
+            int j = 0;
+            do {
+                names[j] = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME));
+                temp[j] = cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_TEMP));
+                j++;
+            } while (cursor.moveToNext());
+
+            tracks = new ArrayList<>(cursor.getCount());
+
+            for (int i = 0; i < cursor.getCount(); i++) {
+                Track t = new Track(names[i], temp[i], i, false);
+                tracks.add(t);
             }
 
         }
     }
+    public int getCheckedCount(ArrayList<Track> t){
+        int count = 0;
+        for (int i = 0; i < t.size(); i++){
+            if (t.get(i).box) count++;
+        }
+        return count;
+    }
 }
+
+
+
