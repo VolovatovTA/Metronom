@@ -124,6 +124,9 @@ public class MainActivity3 extends AppCompatActivity {
     }
     public int DeleteSomeItems(View v, SQLiteDatabase _database) {
         int result = 0;
+        SQLiteDatabase database = (dbHelper).getWritableDatabase();
+        cursor = database.query(DBHelper.TABLE_TRACKS, null, null, null, null, null, null);
+
         cursor.moveToFirst();
 
 
@@ -134,6 +137,7 @@ public class MainActivity3 extends AppCompatActivity {
                 result += _database.delete("tracks", "_id = " + id, null);
             }
             cursor.moveToNext();
+
 
         }
         int[] delete = new int[getCheckedCount(tracks)];
@@ -146,7 +150,9 @@ public class MainActivity3 extends AppCompatActivity {
                 }
             }
         }
-        for (int i = 0; i < getCheckedCount(tracks); i++){
+        for (int i = getCheckedCount(tracks) - 1; i >= 0; i--){
+            Log.d(TAG, "i = " + i);
+            Log.d(TAG, "delete[i] = " + delete[i]);
             tracks.remove(delete[i]);
         }
 
@@ -163,6 +169,7 @@ public class MainActivity3 extends AppCompatActivity {
             Toast.makeText(this, "Было удалено " + result + " записей", Toast.LENGTH_LONG).show();
 
         }
+        cursor.close();
         return  result;
     }
 
