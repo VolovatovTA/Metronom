@@ -117,6 +117,7 @@ public class MainActivity3 extends AppCompatActivity implements View.OnClickList
                     database.delete("List", "id = " + id_for_delete[i], null);
                 }
                 lvList.removeAllViews();
+                
 
                 if (cursor.moveToFirst()){
 
