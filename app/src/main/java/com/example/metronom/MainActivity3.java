@@ -124,7 +124,6 @@ public class MainActivity3 extends AppCompatActivity {
     }
 
     @Override
-<<<<<<< HEAD
     public boolean onPrepareOptionsMenu(Menu menu) {
         // TODO Auto-generated method stub
         // пункты меню с ID группы = 1 видны, если в CheckBox стоит галка
@@ -146,17 +145,7 @@ public class MainActivity3 extends AppCompatActivity {
             int j = getTrackById(tracks, ides[i]);
             tracks.remove(j);
         }
-=======
-    public void onClick(View view) {
-        if (view.getId() == R.id.fab) {
-            isFabAction = !isFabAction;
-            if (!isFabAction){
-                for (int i = 0; i < id_for_delete[numer]; i++) {
-                    database.delete("List", "id = " + id_for_delete[i], null);
-                }
-                lvList.removeAllViews();
-                
->>>>>>> 12f0284e3f2a9f443370cb1ea60d577ec5751fa3
+
 
 
 
