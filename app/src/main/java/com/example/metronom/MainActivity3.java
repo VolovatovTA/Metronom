@@ -12,7 +12,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -27,10 +29,12 @@ public class MainActivity3 extends AppCompatActivity {
     int count_of_tracks;
     String[] names;
     int[] temp;
+    int[] ides;
     private android.view.Menu menu;
     ArrayList<Track> tracks;
     Cursor cursor;
     MyAdapter myAdapter;
+    CheckBox chb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,7 @@ public class MainActivity3 extends AppCompatActivity {
             myAdapter = new MyAdapter(this, tracks);
 
             lvList.setAdapter(myAdapter);
+            chb = findViewById(R.id.cbBox);
 
            /* // Listening
             lvList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -97,10 +102,15 @@ public class MainActivity3 extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+
     public boolean onOptionsItemSelected(MenuItem item) {
+        Animation anim = null;
         if (item.getItemId() == 1) {
             isSelectionMode = true;
             lvList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+            anim = AnimationUtils.loadAnimation(this, R.anim.translate);
+            chb.startAnimation(anim);
+
 
         } else if (item.getItemId() == 2) {
             SQLiteDatabase database = (dbHelper).getWritableDatabase();
@@ -120,41 +130,25 @@ public class MainActivity3 extends AppCompatActivity {
         menu.setGroupVisible(1, isSelectionMode);
 
 
+
         return super.onPrepareOptionsMenu(menu);
     }
     public int DeleteSomeItems(View v, SQLiteDatabase _database) {
-        int result = 0;
+        int result = getCheckedCount(tracks);
         SQLiteDatabase database = (dbHelper).getWritableDatabase();
         cursor = database.query(DBHelper.TABLE_TRACKS, null, null, null, null, null, null);
 
-        cursor.moveToFirst();
-
-
-        for (int i = 0; i < cursor.getCount(); i++) {
-            if (tracks.get(i).box){
-                int id = cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_ID));
-                Log.d(TAG, "id = " + id);
-                result += _database.delete("tracks", "_id = " + id, null);
-            }
-            cursor.moveToNext();
-
-
+        int[] ides = getCheckedIdes(tracks);
+        for (int i = 0; i < result; i++){
+            cursor.moveToPosition(ides[i]);
+            database.delete("tracks", "_id = " + ides[i], null);
+            int j = getTrackById(tracks, ides[i]);
+            tracks.remove(j);
         }
-        int[] delete = new int[getCheckedCount(tracks)];
 
-        for (int i = 0; i < getCheckedCount(tracks); i++) {
-            for (int j = 0; j < cursor.getCount(); j++) {
 
-                if (tracks.get(j).box) {
-                    delete[i] = j;
-                }
-            }
-        }
-        for (int i = getCheckedCount(tracks) - 1; i >= 0; i--){
-            Log.d(TAG, "i = " + i);
-            Log.d(TAG, "delete[i] = " + delete[i]);
-            tracks.remove(delete[i]);
-        }
+
+
 
         if (result == 0){
             Toast.makeText(this, "Ни одной записи не было удалено", Toast.LENGTH_LONG).show();
@@ -173,16 +167,26 @@ public class MainActivity3 extends AppCompatActivity {
         return  result;
     }
 
+    private int getTrackById(ArrayList<Track> tracks, int id) {
+        int fended_id = 0;
+        for (int i = 0; i < tracks.size(); i++){
+            if (tracks.get(i).id == id) fended_id = i;
+        }
+        return fended_id;
+    }
+
     public void CreateTrack() {
         if (cursor.moveToLast()) {
             count_of_tracks = cursor.getCount();
             names = new String[count_of_tracks];
             temp = new int[count_of_tracks];
+            ides = new int[count_of_tracks];
 
         } else {
             count_of_tracks = 1;
             names = new String[count_of_tracks];
             temp = new int[count_of_tracks];
+            ides = new int[count_of_tracks];
         }
 
 
@@ -191,13 +195,14 @@ public class MainActivity3 extends AppCompatActivity {
             do {
                 names[j] = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME));
                 temp[j] = cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_TEMP));
+                ides[j] = cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_ID));
                 j++;
             } while (cursor.moveToNext());
 
             tracks = new ArrayList<>(cursor.getCount());
 
             for (int i = 0; i < cursor.getCount(); i++) {
-                Track t = new Track(names[i], temp[i], i, false);
+                Track t = new Track(names[i], temp[i], i, false, ides[i]);
                 tracks.add(t);
             }
 
@@ -210,6 +215,20 @@ public class MainActivity3 extends AppCompatActivity {
         }
         return count;
     }
+    public int[] getCheckedIdes(ArrayList<Track> t){
+        int count_current = 0;
+        int[] ides = new int[getCheckedCount(t)];
+
+        for (int i = 0; i < t.size(); i++){
+            if (t.get(i).box) {
+                ides[count_current] = t.get(i).id;
+                count_current++;
+            }
+        }
+
+        return ides;
+    }
+
 }
 
 

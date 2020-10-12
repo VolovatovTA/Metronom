@@ -84,7 +84,7 @@ public class Saver extends AppCompatActivity implements View.OnClickListener {
                 int nameIndex = cursor.getColumnIndex(DBHelper.KEY_NAME);
                 int tempIndex = cursor.getColumnIndex(DBHelper.KEY_TEMP);
                 do {
-                    Log.d(TAG, "ID = " + cursor.getString(idIndex) +
+                    Log.d(TAG, "id = " + cursor.getString(idIndex) +
                             ", name = " + cursor.getString(nameIndex) +
                             ", temp = " + cursor.getString((tempIndex)));
                 } while (cursor.moveToNext());}

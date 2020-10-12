@@ -36,4 +36,6 @@
     <string name="todo">TODO</string>
     <string name="title_activity_main3">MainActivity</string>
     <string name="previous">Previous</string>
+    <string name="title_activity_test">test</string>
+    <string name="textview">TextView</string>
 </resources>
