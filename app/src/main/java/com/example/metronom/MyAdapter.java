@@ -1,5 +1,6 @@
 package com.example.metronom;
-import java.util.ArrayList;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,8 +9,9 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MyAdapter extends BaseAdapter {
     Context ctx;
@@ -19,8 +21,7 @@ public class MyAdapter extends BaseAdapter {
     MyAdapter(Context context, ArrayList<Track> track) {
         ctx = context;
         objects = track;
-        lInflater = (LayoutInflater) ctx
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        lInflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     // кол-во элементов
@@ -42,11 +43,12 @@ public class MyAdapter extends BaseAdapter {
     }
 
     // пункт списка
+    @SuppressLint("SetTextI18n")
     public View getView(int position, View convertView, ViewGroup parent) {
         // используем созданные, но не используемые view
         View view = convertView;
         if (view == null) {
-            view = lInflater.inflate(R.layout.item, parent, false);
+            view = lInflater.inflate(R.layout.item_check, parent, false);
         }
 
         Track t = getTrack(position);

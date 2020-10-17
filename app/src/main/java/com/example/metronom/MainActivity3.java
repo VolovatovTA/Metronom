@@ -12,11 +12,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -25,7 +30,7 @@ public class MainActivity3 extends AppCompatActivity {
     String TAG = "lifecycle111";
     DBHelper dbHelper;
     ListView lvList;
-    boolean isSelectionMode = true;
+    boolean isSelectionMode = false;
     int count_of_tracks;
     String[] names;
     int[] temp;
@@ -56,10 +61,13 @@ public class MainActivity3 extends AppCompatActivity {
         CreateTrack();
 
 
-            myAdapter = new MyAdapter(this, tracks);
+        myAdapter = new MyAdapter(this, tracks);
 
-            lvList.setAdapter(myAdapter);
-            chb = findViewById(R.id.cbBox);
+        lvList.setAdapter(myAdapter);
+
+
+
+
 
            /* // Listening
             lvList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -104,20 +112,38 @@ public class MainActivity3 extends AppCompatActivity {
 
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        Animation anim = null;
         if (item.getItemId() == 1) {
             isSelectionMode = true;
-            lvList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-            anim = AnimationUtils.loadAnimation(this, R.anim.translate);
-            chb.startAnimation(anim);
+            Animation animation = AnimationUtils.loadAnimation(this, R.anim.scale);
+
+            for (int i = 0; i < tracks.size(); i++){
+                View view = ((LinearLayout)lvList.getChildAt(i));
+                CheckBox checkBox = view.findViewById(R.id.cbBox);
+                checkBox.setLayoutParams(new LinearLayout.LayoutParams(51, LinearLayout.LayoutParams.MATCH_PARENT));
+                checkBox.setVisibility(View.VISIBLE);
+                checkBox.startAnimation(animation);
+            }
+
 
 
         } else if (item.getItemId() == 2) {
+            isSelectionMode = false;
+            Animation animation = AnimationUtils.loadAnimation(this, R.anim.scale1);
+
+            for (int i = 0; i < tracks.size(); i++){
+                View view = ((LinearLayout)lvList.getChildAt(i));
+                CheckBox checkBox = view.findViewById(R.id.cbBox);
+                checkBox.startAnimation(animation);
+                checkBox.setLayoutParams(new LinearLayout.LayoutParams(1, LinearLayout.LayoutParams.MATCH_PARENT));
+                checkBox.setVisibility(View.INVISIBLE);
+            }
+
             SQLiteDatabase database = (dbHelper).getWritableDatabase();
             int count = DeleteSomeItems(findViewById(R.id.toolbar), database);
             if (count != 0) {
                 myAdapter.notifyDataSetChanged();
             }
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -141,14 +167,10 @@ public class MainActivity3 extends AppCompatActivity {
         int[] ides = getCheckedIdes(tracks);
         for (int i = 0; i < result; i++){
             cursor.moveToPosition(ides[i]);
-            database.delete("tracks", "_id = " + ides[i], null);
+            _database.delete("tracks", "_id = " + ides[i], null);
             int j = getTrackById(tracks, ides[i]);
             tracks.remove(j);
         }
-
-
-
-
 
 
         if (result == 0){

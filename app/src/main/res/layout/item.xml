@@ -7,16 +7,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <CheckBox
-        android:id="@+id/cbBox"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="12"
-        android:layout_marginStart="5dp"
-        android:visibility="visible"
-        android:gravity="center">
 
-    </CheckBox>
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
