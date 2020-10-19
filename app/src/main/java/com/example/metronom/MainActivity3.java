@@ -1,5 +1,6 @@
 package com.example.metronom;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,16 +13,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -30,16 +29,18 @@ public class MainActivity3 extends AppCompatActivity {
     String TAG = "lifecycle111";
     DBHelper dbHelper;
     ListView lvList;
-    boolean isSelectionMode = false;
+    static boolean isSelectionMode = false;
     int count_of_tracks;
     String[] names;
     int[] temp;
+    boolean[] acc;
+    int[] count1;
+    int[] count2;
     int[] ides;
     private android.view.Menu menu;
     ArrayList<Track> tracks;
     Cursor cursor;
     MyAdapter myAdapter;
-    CheckBox chb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +65,8 @@ public class MainActivity3 extends AppCompatActivity {
         myAdapter = new MyAdapter(this, tracks);
 
         lvList.setAdapter(myAdapter);
+        lvList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-
-
-
-
-           /* // Listening
             lvList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 public void onItemClick(AdapterView<?> parent, View view,
@@ -77,17 +74,21 @@ public class MainActivity3 extends AppCompatActivity {
                     if (!isSelectionMode) {
                         Log.d(TAG, "itemClick: position = " + position + ", id = " + id);
 
+
                         Intent intent = new Intent(MainActivity3.this, MainActivity.class);
-                        if (cursor.moveToPosition((int) id)) {
-                            intent.putExtra("name", cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME)));
-                            intent.putExtra("temp", cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_TEMP)));
+
+                            intent.putExtra("name", tracks.get(position).name);
+                            intent.putExtra("temp",  tracks.get(position).temp);
+                            intent.putExtra("acc",  tracks.get(position).acc);
+                            intent.putExtra("count1",  tracks.get(position).count1);
+                            intent.putExtra("count2",  tracks.get(position).count2);
                             startActivity(intent);
-                        }
+
                     }
                 }
             });
         }
-        lvList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        /*lvList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
@@ -101,7 +102,7 @@ public class MainActivity3 extends AppCompatActivity {
 
         });*/
 
-    }
+
 
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 1, 1, "Choose");
@@ -109,17 +110,19 @@ public class MainActivity3 extends AppCompatActivity {
         menu.add(1, 3, 0, "Paste in List");
         return super.onCreateOptionsMenu(menu);
     }
-
-
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == 1) {
             isSelectionMode = true;
             Animation animation = AnimationUtils.loadAnimation(this, R.anim.scale);
 
-            for (int i = 0; i < tracks.size(); i++){
+            for (int i = 0; i < lvList.getChildCount(); i++){
                 View view = ((LinearLayout)lvList.getChildAt(i));
+                Log.d(TAG, "i = " + i);
                 CheckBox checkBox = view.findViewById(R.id.cbBox);
-                checkBox.setLayoutParams(new LinearLayout.LayoutParams(51, LinearLayout.LayoutParams.MATCH_PARENT));
+                LinearLayout.LayoutParams params_for_chBox = (LinearLayout.LayoutParams) checkBox.getLayoutParams();;
+                params_for_chBox.width = 51;
+                params_for_chBox.leftMargin = 15;
+                checkBox.setLayoutParams(params_for_chBox);
                 checkBox.setVisibility(View.VISIBLE);
                 checkBox.startAnimation(animation);
             }
@@ -130,7 +133,7 @@ public class MainActivity3 extends AppCompatActivity {
             isSelectionMode = false;
             Animation animation = AnimationUtils.loadAnimation(this, R.anim.scale1);
 
-            for (int i = 0; i < tracks.size(); i++){
+            for (int i = 0; i < lvList.getChildCount(); i++){
                 View view = ((LinearLayout)lvList.getChildAt(i));
                 CheckBox checkBox = view.findViewById(R.id.cbBox);
                 checkBox.startAnimation(animation);
@@ -151,11 +154,8 @@ public class MainActivity3 extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // TODO Auto-generated method stub
-        // пункты меню с ID группы = 1 видны, если в CheckBox стоит галка
+        // пункты меню с ID группы = 1 видны, если выбран режим редактирования
         menu.setGroupVisible(1, isSelectionMode);
-
-
 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -189,7 +189,6 @@ public class MainActivity3 extends AppCompatActivity {
         cursor.close();
         return  result;
     }
-
     private int getTrackById(ArrayList<Track> tracks, int id) {
         int fended_id = 0;
         for (int i = 0; i < tracks.size(); i++){
@@ -197,17 +196,22 @@ public class MainActivity3 extends AppCompatActivity {
         }
         return fended_id;
     }
-
     public void CreateTrack() {
         if (cursor.moveToLast()) {
             count_of_tracks = cursor.getCount();
             names = new String[count_of_tracks];
+            acc = new boolean[count_of_tracks];
+            count1 = new int[count_of_tracks];
+            count2 = new int[count_of_tracks];
             temp = new int[count_of_tracks];
             ides = new int[count_of_tracks];
 
         } else {
             count_of_tracks = 1;
             names = new String[count_of_tracks];
+            acc = new boolean[count_of_tracks];
+            count1 = new int[count_of_tracks];
+            count2 = new int[count_of_tracks];
             temp = new int[count_of_tracks];
             ides = new int[count_of_tracks];
         }
@@ -218,6 +222,9 @@ public class MainActivity3 extends AppCompatActivity {
             do {
                 names[j] = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME));
                 temp[j] = cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_TEMP));
+                acc[j] = cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_ACCENT)) != 0;
+                count1[j] = cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_COUNT1));
+                count2[j] = cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_COUNT2));
                 ides[j] = cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_ID));
                 j++;
             } while (cursor.moveToNext());
@@ -225,7 +232,7 @@ public class MainActivity3 extends AppCompatActivity {
             tracks = new ArrayList<>(cursor.getCount());
 
             for (int i = 0; i < cursor.getCount(); i++) {
-                Track t = new Track(names[i], temp[i], i, false, ides[i]);
+                Track t = new Track(names[i], temp[i], acc[i], count1[i], count2[i],  i, false, ides[i]);
                 tracks.add(t);
             }
 

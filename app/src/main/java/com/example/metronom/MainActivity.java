@@ -42,10 +42,11 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     SoundPool sp1, sp2;
     EditText editTextNumber;
     TextView tvCount1, tvCount2, name_of_metronom;
-    long freq = 90, minfreq = 30, maxfreq = 300;
+    long freq;
+    long minfreq = 30, maxfreq = 300;
     boolean accentOn;
     int soundIdShot1, soundIdShot2;
-    int number_share = 1, number_sounds = 4, count = 1;
+    int number_share = 4, number_sounds = 4, count = 1;
     int l = 0;
     Button tap;
     final int N1 = 2, N2 = 4, N3 = 8, N4 = 16;
@@ -59,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     protected void onStart() {
         Log.d(TAG, "MainActivity onStart");
         super.onStart();
+        /*Intent intent_from_3 = getIntent();
+        freq = intent_from_3.getIntExtra("temp", (int) freq);*/
+
     }
     @Override
     protected void onResume() {
@@ -80,13 +84,16 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "freq = " + freq);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent_from_3 = getIntent();
-        String name = intent_from_3.getStringExtra("name");
+/*
+
+        Log.d(TAG, "freq = " + intent_from_3.getIntExtra("temp", (int) freq));
         Log.d(TAG, "MainActivity onCreate");
+*/        Log.d(TAG, "freq = " + freq);
 
         play = findViewById(R.id.play);
         tap = findViewById(R.id.tap);
@@ -115,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         button10m.setOnClickListener(this);
         button_to_save_LIB.setOnClickListener(this);
         button_to_save_LIST.setOnClickListener(this);
+        Log.d(TAG, "freq = " + freq);
 
         registerForContextMenu(tvCount1);
         registerForContextMenu(tvCount2);
@@ -134,13 +142,35 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         soundIdShot1 = sp1.load(this, R.raw.m61, 1);
         soundIdShot2 = sp2.load(this, R.raw.m62, 1);
 
+        Log.d(TAG, "freq = " + freq);
+
         seekBar.setMax((int) (maxfreq - minfreq));
+        Log.d(TAG, "freq = " + freq);
+        Intent intent_from_3 = getIntent();
+        String name = "";
+        if (intent_from_3.getIntExtra("temp", 0) != 0){
+            freq = intent_from_3.getIntExtra("temp", (int) freq);
+            freq = freq - 60;
+            name = intent_from_3.getStringExtra("name");
+            number_share = intent_from_3.getIntExtra("count2", 4);
+            number_sounds = intent_from_3.getIntExtra("count1", 4);
+            accentOn = intent_from_3.getBooleanExtra("acc", false);
+
+        }
+
+
+        Log.d(TAG, "freq = " + freq);
+
         seekBar.setProgress((int) (freq + minfreq));
+        Log.d(TAG, "freq = " + freq);
+
 
         editTextNumber.setText(Long.toString(freq));
         name_of_metronom.setText(name);
+        tvCount1.setText(number_sounds + "");
+        tvCount2.setText(number_share + "");
+        accent.setChecked(accentOn);
 
-        number_share = 4;
         // Ядро метронома, воспроизводящее звук
         h = new Handler() {
             @Override
@@ -183,10 +213,13 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
         freq = minfreq + seekBar.getProgress();
         editTextNumber.setText(Long.toString(freq));
+        Log.d(TAG, "onProgressChanged");
+
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
+        Log.d(TAG, "onStartTrackingTouch");
 
     }
 
@@ -195,6 +228,8 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     public void onStopTrackingTouch(SeekBar seekBar) {
         freq = minfreq + seekBar.getProgress();
         editTextNumber.setText(freq + "");
+        Log.d(TAG, "onStopTrackingTouch");
+
     }
 
     @Override
@@ -358,7 +393,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                 break;
             case R.id.saveLIST:
                 Intent intent1 = new Intent(this, Saver.class);
-                intent1.putExtra("temp", editTextNumber.getText().toString());
+                intent1.putExtra("temp", freq);
                 intent1.putExtra("accent", accentOn);
                 intent1.putExtra("number_share", number_share);
                 intent1.putExtra("number_sounds", number_sounds);
@@ -377,6 +412,8 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     @SuppressLint("SetTextI18n")
     @Override
     public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+        Log.d(TAG, "onEditorAction");
+
         if (Integer.parseInt(String.valueOf(editTextNumber.getText())) > maxfreq){
             editTextNumber.setText(maxfreq + "");
         }

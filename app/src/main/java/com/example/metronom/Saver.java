@@ -17,12 +17,12 @@ import android.widget.Switch;
 public class Saver extends AppCompatActivity implements View.OnClickListener {
     String TAG = "lifecycle111";
     @SuppressLint("UseSwitchCompatOrMaterialCode")
-    Switch accent;
-    EditText temp;
     EditText name;
     Button save, cancel;
     DBHelper dbHelper;
-    String freq;
+    long freq;
+    boolean isAccentOn;
+    int count1, count2;
 
     @SuppressLint({"SetTextI18n", "WrongViewCast"})
     @Override
@@ -33,15 +33,15 @@ public class Saver extends AppCompatActivity implements View.OnClickListener {
 
         Intent intent = getIntent();
 
-        freq = intent.getStringExtra("temp");
-        boolean isAccentOn = intent.getBooleanExtra("accent", false);
+        freq = intent.getLongExtra("temp", 90);
+        isAccentOn = intent.getBooleanExtra("accent", false);
+        count1 = intent.getIntExtra("number_sounds", 4);
+        count2 = intent.getIntExtra("number_share", 4);
 
         Log.d(TAG, freq + "");
 
         name = findViewById(R.id.Name);
-        temp = findViewById(R.id.Temp);
 
-        accent = findViewById(R.id.accent);
 
         save = findViewById(R.id.saveLIST);
         save.setOnClickListener(this);
@@ -51,8 +51,6 @@ public class Saver extends AppCompatActivity implements View.OnClickListener {
 
         dbHelper = new DBHelper(this);
 
-        temp.setText(freq);
-        accent.setChecked(isAccentOn);
 
     }
 
@@ -60,7 +58,6 @@ public class Saver extends AppCompatActivity implements View.OnClickListener {
     public void onClick(View view) {
 
         String name_of_track = name.getText().toString();
-        String temp_of_track = temp.getText().toString();
 
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
@@ -70,7 +67,13 @@ public class Saver extends AppCompatActivity implements View.OnClickListener {
             Log.d(TAG, name.getText().toString());
 
             contentValues.put(DBHelper.KEY_NAME, name_of_track);
-            contentValues.put(DBHelper.KEY_TEMP, temp_of_track);
+            contentValues.put(DBHelper.KEY_TEMP, (int) freq);
+            int acc;
+            if (isAccentOn) acc = 1;
+            else acc = 0;
+            contentValues.put(DBHelper.KEY_ACCENT, acc);
+            contentValues.put(DBHelper.KEY_COUNT1, count1);
+            contentValues.put(DBHelper.KEY_COUNT2, count2);
 
             database.insert(DBHelper.TABLE_TRACKS, null, contentValues);
 

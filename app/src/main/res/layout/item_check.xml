@@ -11,11 +11,13 @@
     <CheckBox
         android:id="@+id/cbBox"
         android:layout_width="1dp"
+        android:layout_marginStart="0dp"
         android:layout_height="match_parent"
-        android:layout_marginStart="10dp"
+        android:gravity="center"
         android:textSize="70sp"
-        android:visibility="invisible"
-        android:gravity="center">
+        android:scaleX="1.4"
+        android:scaleY="1.4"
+        android:visibility="invisible">
 
     </CheckBox>
 
@@ -23,7 +25,7 @@
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_weight="1"
         android:gravity="left"
@@ -34,14 +36,12 @@
             android:id="@+id/tvName"
             android:layout_width="match_parent"
             android:layout_height="51sp"
-            android:gravity="center_vertical"
+            android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
-            android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
+            android:gravity="center_vertical"
             android:text="gjfjdhjnfgjfjdhjnfgfgjfjdhjnfgjfjdhjnfgjfjdhjnfgjfjdhjnfgfgjfjdhjnfgjfjdhjnf"
-            android:textSize="20sp">
-        </TextView>
-
+            android:textSize="20sp"></TextView>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -52,20 +52,20 @@
                 android:id="@+id/tvTemp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
                 android:text="136"
                 android:textSize="15sp"
-                android:layout_marginStart="20dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tvNum1"
+                android:id="@+id/tvCount1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="4"
                 android:textSize="15sp"
-                app:layout_constraintEnd_toStartOf="@+id/tvSlash"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintBottom_toBottomOf="@+id/tvSlash"
+                app:layout_constraintEnd_toStartOf="@+id/tvSlash" />
 
             <TextView
                 android:id="@+id/tvSlash"
@@ -73,29 +73,29 @@
                 android:layout_height="wrap_content"
                 android:text="/"
                 android:textSize="15sp"
-                app:layout_constraintEnd_toStartOf="@+id/tvNum2"
+                app:layout_constraintEnd_toStartOf="@+id/tvCount2"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tvNum2"
+                android:id="@+id/tvCount2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="220dp"
                 android:text="4"
                 android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tvAccent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="50dp"
                 android:gravity="right"
                 android:text="Accent:On"
-                android:layout_marginEnd="50dp"
                 android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
