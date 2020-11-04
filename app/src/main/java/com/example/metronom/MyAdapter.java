@@ -64,7 +64,7 @@ public class MyAdapter extends BaseAdapter {
         else ((TextView) view.findViewById(R.id.tvAccent)).setText("Accent: Off");
 
         CheckBox checkBox = (CheckBox) view.findViewById(R.id.cbBox);
-        if (MainActivity3.isSelectionMode) {
+        if (Library.isSelectionMode) {
             LinearLayout.LayoutParams params_for_chBox = (LinearLayout.LayoutParams) checkBox.getLayoutParams();;
             params_for_chBox.width = 51;
             params_for_chBox.leftMargin = 15;

@@ -17,7 +17,7 @@
             android:name=".Saver"
             android:theme="@style/Theme.AppCompat.Dialog" />
         <activity
-            android:name=".MainActivity3"
+            android:name=".Library"
             android:label="@string/title_activity_main3"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

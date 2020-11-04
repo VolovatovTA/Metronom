@@ -5,6 +5,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
+import android.app.TabActivity;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -21,10 +23,12 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.Date;
 
@@ -42,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     SoundPool sp1, sp2;
     EditText editTextNumber;
     TextView tvCount1, tvCount2, name_of_metronom;
+    TabLayout tabLayout;
     long freq;
     long minfreq = 30, maxfreq = 300;
     boolean accentOn;
@@ -94,6 +99,14 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         Log.d(TAG, "freq = " + intent_from_3.getIntExtra("temp", (int) freq));
         Log.d(TAG, "MainActivity onCreate");
 */        Log.d(TAG, "freq = " + freq);
+
+        getSupportActionBar().setCustomView(R.layout.action_bar);
+        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+
+        TabLayout.Tab tab = tabLayout.getTabAt(1);
+        tabLayout.selectTab(tab);
+
+        tabLayout.setOnClickListener(this);
 
         play = findViewById(R.id.play);
         tap = findViewById(R.id.tap);
@@ -400,8 +413,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                 startActivity(intent1);
                 break;
             case R.id.saveLIB:
-                Intent intent = new Intent(this, MainActivity3.class);
 
+                break;
+            case R.id.tabLibrary:
+                Intent intent = new Intent(this, Library.class);
                 startActivity(intent);
                 break;
         }

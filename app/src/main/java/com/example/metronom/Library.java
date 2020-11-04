@@ -1,6 +1,5 @@
 package com.example.metronom;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -24,7 +23,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivity3 extends AppCompatActivity {
+public class Library extends AppCompatActivity {
 
     String TAG = "lifecycle111";
     DBHelper dbHelper;
@@ -75,7 +74,7 @@ public class MainActivity3 extends AppCompatActivity {
                         Log.d(TAG, "itemClick: position = " + position + ", id = " + id);
 
 
-                        Intent intent = new Intent(MainActivity3.this, MainActivity.class);
+                        Intent intent = new Intent(Library.this, MainActivity.class);
 
                             intent.putExtra("name", tracks.get(position).name);
                             intent.putExtra("temp",  tracks.get(position).temp);
